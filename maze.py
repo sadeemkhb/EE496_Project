@@ -30,6 +30,10 @@ LED_PIN = 12 # GPIO pin connected to the pixels (18 uses PWM!).
 LED_CHANNEL = 0 # set to '1' for GPIOs 13, 19, 41, 45 or 53
 LED_DMA = 10 # DMA channel to use for generating signal (try 10)
 
+# Buzzer pin setup
+BUZZER = 
+GPIO.setup(BUZZER, GPIO.OUT)
+
 
 # GPIO Pins Setup
     # Ultrasonic
@@ -139,7 +143,12 @@ def motor_right(status, direction, speed): # Motor 1 positive and negative rotat
 	return direction
 
 
-def move(speed, direction, turn, radius=0.6):   # 0 < radius <= 1  
+def move(speed, direction, turn, radius=0.6):   # 0 < radius <= 1 
+	# LED indication during left or right turns
+	 if turn in ['left', 'right']:
+		 led.colorWipe(Color(0, 0, 255))  # Blue
+		  time.sleep(0.2)
+		 led.colorWipe(Color(0, 0, 0))    # Off
 	#speed = 100
 	if direction == 'forward':
 		if turn == 'right':
@@ -178,10 +187,11 @@ def destroy():
 	GPIO.cleanup()             # Release resource
 	
 
-
-
-     
-
+def trigger_buzzer():
+    GPIO.output(BUZZER, GPIO.HIGH)
+    time.sleep(1)
+    GPIO.output(BUZZER, GPIO.LOW)
+	
 
 # Define the LED Class
 class LED:
@@ -209,6 +219,10 @@ class LED:
             self.strip.setPixelColor(i, color)
             self.strip.show()
             time.sleep(wait_ms/1000.0)
+		
+# Instantiate the LED object globally
+led = LED()
+		
 
 
 
